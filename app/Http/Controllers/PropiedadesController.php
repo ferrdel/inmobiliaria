@@ -22,7 +22,7 @@ class PropiedadesController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validamos todos los campos de una vez
+        // Validamos todos los campos de una vez
         $data = $request->validate([
             'nombre_titulo' => 'required|string|max:255',
             'tipo'          => 'required|string',
@@ -35,7 +35,7 @@ class PropiedadesController extends Controller
             'imagenes.*'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        // 2. Procesamos las imágenes antes de guardar
+        // Procesamos las imágenes antes de guardar
         $rutasImagenes = [];
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $archivo) {
@@ -44,40 +44,66 @@ class PropiedadesController extends Controller
             }
         }
 
-        // 3. Preparamos el array final de datos
+        // Preparamos el array final de datos
         $data['user_id'] = auth()->id();
         $data['imagenes_path'] = $rutasImagenes; // Se guardará como JSON por el cast del modelo
 
-        // 4. Creamos la propiedad una SOLA VEZ
+        // Creamos la propiedad una SOLA VEZ
         Propiedad::create($data);
 
-        // 5. Redireccionamos (El return final)
+        // Redireccionamos (El return final)
         return redirect()->route('dashboard')->with('success', 'Propiedad creada con éxito.');
     }
 
+        // Muestra el formulario con los datos cargados
+    public function edit(Propiedad $propiedad)
+    {
+        // Solo el admin o el creador podrían editar (opcional, según tu lógica)
+        return view('propiedades.edit', compact('propiedad'));
+    }
+
+    // Procesa la actualización
     public function update(Request $request, Propiedad $propiedad)
     {
-        $this->authorize('update', $propiedad);
-
-        if (auth()->user()->cannot('updatePrecio', Propiedad::class)) {
-            $request->request->remove('precio'); 
+        // REQUISITO DE PERFIL: Si no es admin, protegemos el precio
+        if (auth()->user()->role !== 'admin') {
+            // Eliminamos el precio del request para que no se actualice si un operario lo intenta
+            $request->request->remove('precio');
         }
 
+        // Validación
         $data = $request->validate([
-            'nombre_titulo' => 'required|string',
-            'precio'        => 'sometimes|required|numeric',
-            // Agrega aquí los demás campos que permitas editar
+            'nombre_titulo' => 'required|string|max:255',
+            'tipo'          => 'required|string',
+            'direccion'     => 'required|string',
+            'precio'        => 'sometimes|required|numeric', // 'sometimes' porque puede no venir si es operario
+            'descripcion'   => 'required|string',
+            'estado'        => 'required|string',
+            'superficie_m2' => 'required|numeric',
+            'ambientes'     => 'required|integer',
         ]);
 
+        // Actualizamos los datos
         $propiedad->update($data);
-        return redirect()->route('dashboard')->with('success', 'Propiedad actualizada.');
+
+        return redirect()->route('dashboard')->with('success', 'Propiedad actualizada correctamente.');
     }
 
     public function destroy(Propiedad $propiedad)
     {
-        $this->authorize('delete', $propiedad);
+        //Buscamos la propiedad
+        //$propiedad = Propiedad::findOrFail($propiedad);
+
+        // 2. Verificamos que sea ADMIN (Requisito de seguridad)
+        if (auth()->user()->role !== 'admin') {
+            return redirect()->back()->with('error', 'No tienes permisos para eliminar propiedades.');
+        }
+
+        // 3. Eliminamos (Esto disparará automáticamente el evento 'deleted' de tu Auditoría)
         $propiedad->delete();
-        return redirect()->route('dashboard')->with('success', 'Propiedad eliminada.');
+
+        // 4. Redirigimos al dashboard con un mensaje
+        return redirect()->route('dashboard')->with('success', 'Propiedad eliminada correctamente.');
     }
 }
 
