@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Propiedad;
 use Illuminate\Support\Facades\Auth;
+use App\Mail\MailPropiedadMailable;
+use Illuminate\Support\Facades\Mail;
 
 class PropiedadesController extends Controller
 {
@@ -49,10 +51,23 @@ class PropiedadesController extends Controller
         $data['imagenes_path'] = $rutasImagenes; // Se guardará como JSON por el cast del modelo
 
         // Creamos la propiedad una SOLA VEZ
-        Propiedad::create($data);
+        //Propiedad::create($data);
 
         // Redireccionamos (El return final)
-        return redirect()->route('dashboard')->with('success', 'Propiedad creada con éxito.');
+        //return redirect()->route('dashboard')->with('success', 'Propiedad creada con éxito.');
+
+        $propiedad = Propiedad::create($data);
+
+        // NUEVO: Enviar el email
+        // Aquí pon tu correo personal donde quieres recibir la prueba
+        try {
+            Mail::to('fernandoramirezdelgado@gmail.com')->send(new \App\Mail\MailPropiedadMailable($propiedad));
+        } catch (\Exception $e) {
+            // Si el mail falla, que la app no se rompa, solo logueamos el error
+            dd("Error enviando mail: " . $e->getMessage());
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Propiedad cargada y notificación enviada.');
     }
 
         // Muestra el formulario con los datos cargados
