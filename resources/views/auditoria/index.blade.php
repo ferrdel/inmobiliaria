@@ -61,21 +61,54 @@
                         <td colspan="5" class="p-0 border-0">
                             <div class="collapse bg-light" id="details-{{ $log->id }}">
                                 <div class="p-3">
+                                    {{-- Definimos los campos que NO queremos mostrar una sola vez al principio --}}
+                                    @php $ocultar = ['id', 'created_at', 'updated_at', 'user_id', 'imagenes_path']; @endphp
+
                                     @if($log->accion == 'editar')
                                         <div class="row">
+                                            {{-- Lado Izquierdo: Antes --}}
                                             <div class="col-md-6">
-                                                <h6><del class="text-danger">Valores Anteriores:</del></h6>
-                                                <pre class="bg-white p-2 border rounded"><code>{{ json_encode($log->valores_anteriores, JSON_PRETTY_PRINT) }}</code></pre>
+                                                <h6 class="text-danger"><strong><i class="bi bi-arrow-left-circle"></i> Antes:</strong></h6>
+                                                <div class="bg-white p-3 border rounded shadow-sm">
+                                                    @foreach($log->valores_anteriores as $campo => $valor)
+                                                        @if(in_array($campo, $ocultar)) @continue @endif {{-- FILTRO AQUÍ --}}
+                                                        <div class="mb-1">
+                                                            <span class="badge bg-secondary-subtle text-dark">{{ ucfirst(str_replace('_', ' ', $campo)) }}:</span>
+                                                            <span class="text-muted text-decoration-line-through">{{ $valor }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
                                             </div>
+
+                                            {{-- Lado Derecho: Ahora --}}
                                             <div class="col-md-6">
-                                                <h6><ins class="text-success">Valores Nuevos:</ins></h6>
-                                                <pre class="bg-white p-2 border rounded"><code>{{ json_encode($log->valores_nuevos, JSON_PRETTY_PRINT) }}</code></pre>
+                                                <h6 class="text-success"><strong><i class="bi bi-arrow-right-circle"></i> Ahora:</strong></h6>
+                                                <div class="bg-white p-3 border rounded shadow-sm">
+                                                    @foreach($log->valores_nuevos as $campo => $valor)
+                                                        @if(in_array($campo, $ocultar)) @continue @endif {{-- FILTRO AQUÍ --}}
+                                                        <div class="mb-1">
+                                                            <span class="badge bg-primary-subtle text-dark">{{ ucfirst(str_replace('_', ' ', $campo)) }}:</span>
+                                                            <span class="fw-bold">{{ $valor }}</span>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         </div>
                                     @else
-                                        {{-- Para crear o eliminar, mostramos solo los valores nuevos/eliminados --}}
-                                        <h6>Datos del registro ({{ $log->accion }}):</h6>
-                                        <pre class="bg-white p-2 border rounded"><code>{{ json_encode($log->valores_nuevos ?? $log->valores_anteriores, JSON_PRETTY_PRINT) }}</code></pre>
+                                        {{-- Caso de Crear o Eliminar --}}
+                                        <h6 class="text-primary"><strong>Datos del registro ({{ ucfirst($log->accion) }}):</strong></h6>
+                                        <div class="bg-white p-3 border rounded shadow-sm">
+                                            @php $datos = $log->valores_nuevos ?? $log->valores_anteriores; @endphp
+                                            @foreach($datos as $campo => $valor)
+                                                @if(in_array($campo, $ocultar)) @continue @endif {{-- FILTRO AQUÍ --}}
+                                                @if(!is_array($valor))
+                                                    <div class="mb-1">
+                                                        <strong class="text-capitalize">{{ str_replace('_', ' ', $campo) }}:</strong> 
+                                                        <span>{{ $valor }}</span>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        </div>
                                     @endif
                                 </div>
                             </div>
