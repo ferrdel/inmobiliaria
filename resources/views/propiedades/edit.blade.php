@@ -37,13 +37,17 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Precio (USD)</label>
-                        {{-- REQUISITO IMAGEN: Bloqueado para Operario --}}
-                        <input type="number" name="precio" class="form-control" 
-                               value="{{ old('precio', $propiedad->precio) }}" 
-                               {{ auth()->user()->role !== 'admin' ? 'readonly' : '' }} required>
+                        <label class="form-label">Precio</label>
+                        <input type="text" 
+                            name="precio" 
+                            class="form-control {{ auth()->user()->role !== 'admin' ? 'bg-light' : '' }}" 
+                            value="{{ $propiedad->precio }}"
+                            {{ auth()->user()->role !== 'admin' ? 'readonly' : '' }}>
+
                         @if(auth()->user()->role !== 'admin')
-                            <small class="text-danger">Solo el administrador puede cambiar el precio.</small>
+                            <small class="text-muted italic">
+                                <i class="bi bi-info-circle"></i> Usted no tiene permisos para modificar el precio.
+                            </small>
                         @endif
                     </div>
 

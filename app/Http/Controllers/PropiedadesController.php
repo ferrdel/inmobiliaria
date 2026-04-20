@@ -10,9 +10,39 @@ use Illuminate\Support\Facades\Mail;
 
 class PropiedadesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $propiedades = Propiedad::with('user')->get();
+        // Capturamos lo que el usuario escribió en los inputs
+        $buscar = $request->input('buscar');
+        $tipo = $request->input('tipo');
+        $min_precio = $request->input('min_precio');
+        $max_precio = $request->input('max_precio');
+
+        // Iniciamos la consulta base
+        $query = Propiedad::query();
+
+        //  Filtramos por nombre/título si existe búsqueda
+        if ($buscar) {
+            $query->where('nombre_titulo', 'LIKE', "%{$buscar}%");
+        }
+
+        //  Filtramos por tipo si se seleccionó uno
+        if ($tipo) {
+            $query->where('tipo', $tipo);
+        }
+
+        //  Filtramos por rango de precio si se especificaron ambos valores
+        if ($min_precio && $max_precio) {
+            $query->whereBetween('precio', [$min_precio, $max_precio]);
+        } elseif ($min_precio) {
+            $query->where('precio', '>=', $min_precio);
+        } elseif ($max_precio) {
+            $query->where('precio', '<=', $max_precio);
+        }
+
+        // Obtenemos los resultados finales
+        $propiedades = $query->with('user')->orderBy('created_at', 'desc')->get();
+
         return view('dashboard', compact('propiedades'));
     }
 

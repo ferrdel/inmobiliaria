@@ -12,7 +12,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>Fecha/Hora</th>
-                        <th>Usuario</th>
+                        <th>Usuario/Tipo</th>
                         <th>Acción</th>
                         <th>Propiedad ID</th>
                         <th>Detalles de Cambios</th>
