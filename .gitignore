@@ -22,3 +22,21 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Windows
+Desktop.ini
+ehthumbs.db
+
+# SQLite
+*.sqlite
+*.sqlite-journal
+
+# Herramientas de PHP
+.php-cs-fixer.cache
+.phpunit.result.cache
+
+# Extras recomendados
+/storage/debugbar/
+Desktop.ini
+*.sqlite
+.php-cs-fixer.cache
