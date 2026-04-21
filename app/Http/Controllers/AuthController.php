@@ -12,7 +12,7 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    // Procesa el inicio de sesión
+    // Procesa el inicio de sesion
     public function login(Request $request) {
         $credentials = $request->validate([
             'name' => ['required', 'string'],
@@ -21,7 +21,7 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('dashboard'); // A donde irá al entrar
+            return redirect()->intended('dashboard'); // A donde ira al entrar
         }
 
         return back()->withErrors([
@@ -29,7 +29,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // Cerrar sesión
+    // Cerrar sesion
     public function logout(Request $request) {
         Auth::logout();
         $request->session()->invalidate();

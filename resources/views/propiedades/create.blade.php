@@ -8,22 +8,23 @@
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">Cargar Nueva Propiedad</h4>
                 </div>
+
                 <div class="card-body">
                     @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                     @endif
+                    
                     <form action="{{ route('propiedades.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        
                         <div class="row">
                             <div class="col-md-12 mb-3">
-                                <label class="form-label">Nombre y Título</label>
+                                <label class="form-label">Nombre y Titulo</label>
                                 <input type="text" name="nombre_titulo" class="form-control" placeholder="Ej: Casa Quinta con Pileta" required>
                             </div>
 
@@ -34,7 +35,7 @@
                                     <option value="Departamento">Departamento</option>
                                     <option value="Local">Local</option>
                                     <option value="Terreno">Terreno</option>
-                                    <option value="Galpon">Galpón</option>
+                                    <option value="Galpon">Galpon</option>
                                 </select>
                             </div>
 
@@ -51,6 +52,7 @@
                                 <label class="form-label">Precio</label>
                                 <input type="number" name="precio" class="form-control" step="0.01" required>
                             </div>
+
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Superficie (m2)</label>
                                 <input type="number" name="superficie_m2" class="form-control" step="0.01" required>
@@ -60,19 +62,20 @@
                                 <label class="form-label">Ambientes</label>
                                 <input type="number" name="ambientes" class="form-control" required>
                             </div>
+
                             <div class="col-md-8 mb-3">
                                 <label class="form-label">Dirección</label>
                                 <input type="text" name="direccion" class="form-control" placeholder="Dirección completa" required>
                             </div>
 
                             <div class="col-md-12 mb-3">
-                                <label class="form-label fw-bold">Imágenes de la Propiedad</label>
+                                <label class="form-label fw-bold">Imagenes de la Propiedad</label>
                                 <input type="file" name="imagenes[]" class="form-control" multiple accept="image/*">
                                 <small class="text-muted">Puedes seleccionar varias fotos manteniendo presionada la tecla Ctrl.</small>
                             </div>
 
                             <div class="col-md-12 mb-3">
-                                <label class="form-label">Descripción</label>
+                                <label class="form-label">Descripcion</label>
                                 <textarea name="descripcion" class="form-control" rows="3" required></textarea>
                             </div>
                         </div>

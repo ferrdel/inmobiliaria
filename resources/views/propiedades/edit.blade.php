@@ -9,21 +9,21 @@
         </div>
         <div class="card-body">
             @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
             @endif
+
             <form action="{{ route('propiedades.update', ['propiedad' => $propiedad->id]) }}" method="POST">
                 @csrf
-                @method('PUT') {{-- OBLIGATORIO para actualizaciones en Laravel --}}
-
+                @method('PUT')
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label class="form-label">Nombre y Título</label>
+                        <label class="form-label">Nombre y Titulo</label>
                         <input type="text" name="nombre_titulo" class="form-control" value="{{ old('nombre_titulo', $propiedad->nombre_titulo) }}" required>
                     </div>
 
@@ -71,12 +71,12 @@
                     </div>
                     
                     <div class="col-md-8 mb-3">
-                        <label class="form-label">Dirección</label>
+                        <label class="form-label">Direccion</label>
                         <input type="text" name="direccion" class="form-control" placeholder="Dirección" value="{{ old('direccion', $propiedad->direccion) }}" required>
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label">Descripción</label>
+                        <label class="form-label">Descripcion</label>
                         <textarea name="descripcion" class="form-control" rows="3">{{ old('descripcion', $propiedad->descripcion) }}</textarea>
                     </div>
                 </div>

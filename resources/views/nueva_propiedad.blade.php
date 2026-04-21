@@ -11,10 +11,10 @@
     <div class="card">
         <div class="titulo">Nueva propiedad cargada</div>
         <div class="info">
-            <p><strong>Título:</strong> {{ $propiedad->nombre_titulo }}</p>
+            <p><strong>Titulo:</strong> {{ $propiedad->nombre_titulo }}</p>
             <p><strong>Tipo:</strong> {{ $propiedad->tipo }}</p>
             <p><strong>Precio:</strong> ${{ number_format($propiedad->precio, 2) }}</p>
-            <p><strong>Ubicación:</strong> {{ $propiedad->direccion }}</p>
+            <p><strong>Ubicacion:</strong> {{ $propiedad->direccion }}</p>
         </div>
         <p>Registrado por: {{ auth()->user()->name }}</p>
     </div>

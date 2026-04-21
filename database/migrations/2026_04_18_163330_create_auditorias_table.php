@@ -11,18 +11,18 @@ return new class extends Migration
         Schema::create('auditorias', function (Blueprint $table) {
             $table->id();
             
-            // Relaciones (quién y sobre qué)
+            // Relaciones con usuarios y propiedades
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null'); // Usuario que hizo la acción
             $table->unsignedBigInteger('propiedad_id')->nullable(); // ID de la propiedad afectada
             
-            // Datos de la acción
-            $table->string('accion'); // 'crear', 'editar', 'eliminar'
+            // Datos de la accion 'crear', 'editar', 'eliminar'
+            $table->string('accion'); 
             
-            // Datos técnicos de los cambios (usaremos JSON para flexibilidad)
+            // Datos de los cambios 
             $table->json('valores_anteriores')->nullable(); // Solo para 'editar'
             $table->json('valores_nuevos')->nullable(); // Para 'crear' y 'editar'
             
-            // Campos de fecha automáticos (created_at servirá como fecha/hora del evento)
+            // Campos de fecha automaticos (created_at servira como fecha/hora del evento)
             $table->timestamps();
         });
     }

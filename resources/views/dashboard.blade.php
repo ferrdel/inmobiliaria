@@ -20,39 +20,34 @@
             </div>
 
             <div class="card mb-3 shadow-sm">
-    <div class="card-body py-2"> <form action="{{ route('dashboard') }}" method="GET" class="row g-2 align-items-center">
-            
-            <div class="col-auto">
-                <input type="text" name="buscar" class="form-control form-control-sm" 
+                <div class="card-body py-2"> <form action="{{ route('dashboard') }}" method="GET" class="row g-2 align-items-center">
+                    <div class="col-auto">
+                        <input type="text" name="buscar" class="form-control form-control-sm" 
                        style="width: 180px;" placeholder="Nombre..." value="{{ request('buscar') }}">
+                    </div>
+
+                    <div class="col-auto">
+                        <select name="tipo" class="form-select form-select-sm" style="width: 130px;">
+                            <option value="">Tipos</option>
+                            <option value="Casa" {{ request('tipo') == 'Casa' ? 'selected' : '' }}>Casa</option>
+                            <option value="Departamento" {{ request('tipo') == 'Departamento' ? 'selected' : '' }}>Depto</option>
+                        </select>
+                    </div>
+
+                    <div class="col-auto d-flex align-items-center">
+                        <label class="small me-1 mb-0">$</label>
+                        <input type="number" name="min_precio" class="form-control form-control-sm" style="width: 90px;" placeholder="Mín" value="{{ request('min_precio') }}">
+                        <span class="mx-1 small">-</span>
+                        <input type="number" name="max_precio" class="form-control form-control-sm" style="width: 90px;" placeholder="Máx" value="{{ request('max_precio') }}">
+                    </div>
+
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+                        <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+                    </div>
+                </div>
             </div>
-
-            <div class="col-auto">
-                <select name="tipo" class="form-select form-select-sm" style="width: 130px;">
-                    <option value="">Tipos</option>
-                    <option value="Casa" {{ request('tipo') == 'Casa' ? 'selected' : '' }}>Casa</option>
-                    <option value="Departamento" {{ request('tipo') == 'Departamento' ? 'selected' : '' }}>Depto</option>
-                </select>
-            </div>
-
-            <div class="col-auto d-flex align-items-center">
-                <label class="small me-1 mb-0">$</label>
-                <input type="number" name="min_precio" class="form-control form-control-sm" 
-                       style="width: 90px;" placeholder="Mín" value="{{ request('min_precio') }}">
-                <span class="mx-1 small">-</span>
-                <input type="number" name="max_precio" class="form-control form-control-sm" 
-                       style="width: 90px;" placeholder="Máx" value="{{ request('max_precio') }}">
-            </div>
-
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
-                <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary btn-sm">Limpiar</a>
-            </div>
-
-        </form>
-    </div>
-</div>
-
+            
             <div class="card-body p-0">
                 <table class="table table-striped table-hover mb-0">
                     <thead class="table-dark">
@@ -69,10 +64,10 @@
                             {{-- Mostramos el título real --}}
                             <td>{{ $propiedad->nombre_titulo }}</td>
 
-                            {{-- Mostramos el precio con formato de moneda --}}
+                            {{-- Mostramos el precio --}}
                             <td>${{ number_format($propiedad->precio, 2, ',', '.') }}</td>
 
-                            {{-- Mostramos el estado con un color dinámico de Bootstrap --}}
+                            {{-- Mostramos el estado con un color de Bootstrap --}}
                             <td>
                                 @if($propiedad->estado == 'Disponible')
                                     <span class="badge bg-success">Disponible</span>
@@ -85,12 +80,12 @@
 
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    {{-- Botón Editar: Ahora lleva el ID de la propiedad --}}
+                                    {{-- Boton Editar: Ahora lleva el ID de la propiedad --}}
                                     <a href="{{ route('propiedades.edit', $propiedad->id) }}" class="btn btn-outline-warning">Editar</a>
 
-                                    {{-- Lógica de Roles para Eliminar --}}
+                                    {{-- Logica de Roles para Eliminar --}}
                                     @if(auth()->user()->role === 'admin')
-                                        {{-- Formulario para eliminar (necesario para enviar método DELETE) --}}
+                                        {{-- Formulario para eliminar (necesario para enviar metodo DELETE) --}}
                                         <form action="{{ route('propiedades.destroy', $propiedad->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
@@ -99,7 +94,7 @@
                                             </button>
                                         </form>
                                     @else
-                                        {{-- El Operario ve el botón deshabilitado como tenías en tu captura --}}
+                                        {{-- El Operario ve el boton deshabilitado--}}
                                         <button class="btn btn-outline-secondary" disabled title="Solo Administrador">
                                             Eliminar
                                         </button>
@@ -109,7 +104,7 @@
                         </tr>
                         @endforeach
 
-                        {{-- Si la base de datos está vacía, mostramos un mensaje --}}
+                        {{-- Si no hay propiedades registradas se muestra un mensaje --}}
                         @if($propiedades->isEmpty())
                             <tr>
                                 <td colspan="4" class="text-center text-muted">No hay propiedades cargadas actualmente.</td>

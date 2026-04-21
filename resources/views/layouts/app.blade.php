@@ -9,9 +9,9 @@
         body { padding-top: 70px; } /* Espacio para el navbar fijo */
     </style>
 </head>
-<body class="bg-light">
+<body style="background-color: #b3d9ff !important;">
 
-    {{-- Aquí incluiremos el menú dinámico en el siguiente paso --}}
+    {{-- Aquí incluimos el menu dinámico --}}
     @include('layouts.navigation')
 
     <div class="container">

@@ -12,7 +12,7 @@ class PropiedadesController extends Controller
 {
     public function index(Request $request)
     {
-        // Capturamos lo que el usuario escribió en los inputs
+        // Capturamos lo que viene de los inputs
         $buscar = $request->input('buscar');
         $tipo = $request->input('tipo');
         $min_precio = $request->input('min_precio');
@@ -21,17 +21,17 @@ class PropiedadesController extends Controller
         // Iniciamos la consulta base
         $query = Propiedad::query();
 
-        //  Filtramos por nombre/título si existe búsqueda
+        //  Filtramos por nombre si existe
         if ($buscar) {
             $query->where('nombre_titulo', 'LIKE', "%{$buscar}%");
         }
 
-        //  Filtramos por tipo si se seleccionó uno
+        //  Filtramos por tipo si se especifico
         if ($tipo) {
             $query->where('tipo', $tipo);
         }
 
-        //  Filtramos por rango de precio si se especificaron ambos valores
+        //  Filtramos por rango de precio si cargo ambos valores
         if ($min_precio && $max_precio) {
             $query->whereBetween('precio', [$min_precio, $max_precio]);
         } elseif ($min_precio) {
@@ -48,7 +48,6 @@ class PropiedadesController extends Controller
 
     public function create()
     {
-        // Solo debe haber UNA función create para mostrar el formulario
         return view('propiedades.create');
     }
 
@@ -67,7 +66,7 @@ class PropiedadesController extends Controller
             'imagenes.*'    => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        // Procesamos las imágenes antes de guardar
+        // Procesamos las imagenes antes de guardar
         $rutasImagenes = [];
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $archivo) {
@@ -78,45 +77,36 @@ class PropiedadesController extends Controller
 
         // Preparamos el array final de datos
         $data['user_id'] = auth()->id();
-        $data['imagenes_path'] = $rutasImagenes; // Se guardará como JSON por el cast del modelo
-
-        // Creamos la propiedad una SOLA VEZ
-        //Propiedad::create($data);
-
-        // Redireccionamos (El return final)
-        //return redirect()->route('dashboard')->with('success', 'Propiedad creada con éxito.');
+        $data['imagenes_path'] = $rutasImagenes; 
 
         $propiedad = Propiedad::create($data);
 
-        // NUEVO: Enviar el email
-        // Aquí pon tu correo personal donde quieres recibir la prueba
+        // Enviar el email de notificacion 
         try {
             Mail::to('fernandoramirezdelgado@gmail.com')->send(new \App\Mail\MailPropiedadMailable($propiedad));
         } catch (\Exception $e) {
-            // Si el mail falla, que la app no se rompa, solo logueamos el error
+            // Si el mail falla, logueamos el error
             dd("Error enviando mail: " . $e->getMessage());
         }
 
         return redirect()->route('dashboard')->with('success', 'Propiedad cargada y notificación enviada.');
     }
 
-        // Muestra el formulario con los datos cargados
+    // Muestra el formulario con los datos cargados
     public function edit(Propiedad $propiedad)
     {
-        // Solo el admin o el creador podrían editar (opcional, según tu lógica)
         return view('propiedades.edit', compact('propiedad'));
     }
 
-    // Procesa la actualización
+    // Procesa la actualizacion
     public function update(Request $request, Propiedad $propiedad)
     {
         // REQUISITO DE PERFIL: Si no es admin, protegemos el precio
         if (auth()->user()->role !== 'admin') {
-            // Eliminamos el precio del request para que no se actualice si un operario lo intenta
             $request->request->remove('precio');
         }
 
-        // Validación
+        // Validacion
         $data = $request->validate([
             'nombre_titulo' => 'required|string|max:255',
             'tipo'          => 'required|string',
@@ -136,18 +126,16 @@ class PropiedadesController extends Controller
 
     public function destroy(Propiedad $propiedad)
     {
-        //Buscamos la propiedad
-        //$propiedad = Propiedad::findOrFail($propiedad);
 
-        // 2. Verificamos que sea ADMIN (Requisito de seguridad)
+        // Verificamos que sea ADMIN
         if (auth()->user()->role !== 'admin') {
             return redirect()->back()->with('error', 'No tienes permisos para eliminar propiedades.');
         }
 
-        // 3. Eliminamos (Esto disparará automáticamente el evento 'deleted' de tu Auditoría)
+        // Eliminamos. Dispara el evento 'deleted' de Auditoria
         $propiedad->delete();
 
-        // 4. Redirigimos al dashboard con un mensaje
+        //Redirigimos al dashboard con un mensaje
         return redirect()->route('dashboard')->with('success', 'Propiedad eliminada correctamente.');
     }
 }

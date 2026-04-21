@@ -14,12 +14,12 @@
                     <a class="btn btn-success mt-1 ms-lg-2" href="{{ route('propiedades.create') }}">+ Cargar Nueva</a>
                 </li>
                 
-                {{-- REQUISITO: Solo ADMINISTRADOR puede ver historial --}}
+                {{-- Solo ADMINISTRADOR puede ver historial --}}
                 {{-- Usamos IF para ocultar este menú al Operario --}}
                 @if(auth()->user()->role === 'admin')                    
                     <li class="nav-item">
                         <a class="nav-link text-warning" href="{{ route('auditoria.index') }}">
-                            <i class="bi bi-clock-history"></i> Auditoría
+                            <i class="bi bi-clock-history"></i> Auditoria
                         </a>
                     </li>
                 @endif
